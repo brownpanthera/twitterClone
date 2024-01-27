@@ -1,24 +1,12 @@
-import express from "express"
+const express = require("express");
 
-const app = express()
-app.get('/', (req, res) => {
-    res.send("hello kryptonian")
-})
+const app = express();
+const routes = require("./Routes/index");
 
-app.get('/api/jokes', (req, res)=> {
-    const jokes = [
-        
-        {
-            id: 1,
-            title: "my my ",
-            description: "aye aye caption he said"
-        }
-    ]
-    res.send(jokes)
-})   
+app.use(routes);
 
-const port = process.env.port || 3000
+const port = process.env.port || 3000;
 
-app.listen(port, ()=>{
-    console.log(`server is listening on localhost:${port}`);
-})
+app.listen(port, () => {
+  console.log(`server is listening on localhost:${port}`);
+});
