@@ -1,5 +1,6 @@
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const passport = require("passport");
+const User = require("../Models/User");
 
 passport.use(
   new GoogleStrategy(
@@ -11,8 +12,15 @@ passport.use(
     },
     async (request, accessToken, refreshToken, profile, done) => {
       try {
-        console.log(profile);
-        return done(null, profile);
+        // user addition in db
+        const { _json } = profile;
+        const { name, email, picture } = _json;
+        const userExists = await User.findOne({ email });
+        if (userExists) {
+          return done(null, userExists);
+        }
+        const user = await User.create({ name, email, pic: picture });
+        return done(null, user);
       } catch (error) {
         return done(error, false);
       }

@@ -1,5 +1,6 @@
 // this is the root file for api
 // URL here is '/api'
+const jwt = require("jsonwebtoken");
 const passport = require("passport");
 const router = require("express").Router();
 
@@ -18,7 +19,11 @@ router.get(
     failureRedirect: "http://localhost:3000/",
   }),
   (req, res) => {
-    res.redirect("http://localhost:3000/profile?token=tokenishere");
+    const token = jwt.sign({ user: req.user }, process.env.JWT_SECRET, {
+      expiresIn: "2d",
+    });
+    console.log("token", token);
+    res.redirect(`http://localhost:3000/?token=${token}`);
   }
 );
 

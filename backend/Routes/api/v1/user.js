@@ -1,7 +1,16 @@
 // all the routes related to user will be here
-// url here is `/api/v1/user/auth`
+
+const {
+  getAllUsers,
+  deleteUserById,
+  getUserById,
+} = require("../../../Controllers/User/userController");
+
+// url here is `/api/v1/user`
 const router = require("express").Router();
 
-router.get("/auth");
+router.get("/allUsers", getAllUsers);
+router.get("/:id", getUserById);
+router.delete("/:id", deleteUserById);
 
 module.exports = router;

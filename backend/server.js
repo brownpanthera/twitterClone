@@ -10,6 +10,7 @@ require("./socialAuths/Google");
 const connectDB = require("./db/Connect");
 const routes = require("./Routes/index");
 
+app.use(express.json());
 app.use(passport.initialize());
 app.use(routes);
 

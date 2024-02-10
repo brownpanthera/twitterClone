@@ -4,7 +4,11 @@
 
 const router = require("express").Router();
 const userRoutes = require("./user");
+const tweetRoutes = require("./tweet");
+const threadRoutes = require("./thread");
 
 router.use("/user", userRoutes);
+router.use("/tweet", tweetRoutes);
+router.use("/thread", threadRoutes);
 
 module.exports = router;
