@@ -1,24 +1,30 @@
-import express from "express"
+require("dotenv").config();
+const express = require("express");
+const app = express();
 
-const app = express()
-app.get('/', (req, res) => {
-    res.send("hello kryptonian")
-})
+const cors = require("cors");
+app.use(cors());
 
-app.get('/api/jokes', (req, res)=> {
-    const jokes = [
-        
-        {
-            id: 1,
-            title: "my my ",
-            description: "aye aye caption he said"
-        }
-    ]
-    res.send(jokes)
-})   
+const passport = require("passport");
+require("./socialAuths/Google");
+const connectDB = require("./db/Connect");
+const routes = require("./Routes/index");
 
-const port = process.env.port || 3000
+app.use(express.json());
+app.use(passport.initialize());
+app.use(routes);
 
-app.listen(port, ()=>{
-    console.log(`server is listening on localhost:${port}`);
-})
+const PORT = process.env.PORT || 5000;
+
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI);
+    app.listen(PORT, () =>
+      console.log(`Server is listening on port ${PORT}...`)
+    );
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+start();
