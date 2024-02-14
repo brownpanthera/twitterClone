@@ -1,21 +1,20 @@
 const Tweet = require("../../Models/Tweets");
-const Thread = require("../../Models/Thread");
+const { groupTweetsByParent } = require("../../helper");
 
 const postTweet = async (req, res) => {
+  if (!req.user) {
+    return res
+      .status(400)
+      .json({ success: false, message: "User unauthorized" });
+  }
+
+  const { tweet } = req.body;
+  if (!tweet) {
+    return res
+      .status(404)
+      .json({ success: false, message: "tweet field is required" });
+  }
   try {
-    if (!req.user) {
-      return res
-        .status(400)
-        .json({ success: false, message: "User unauthorized" });
-    }
-
-    const { tweet } = req.body;
-    if (!tweet) {
-      return res
-        .status(404)
-        .json({ success: false, message: "tweet field is required" });
-    }
-
     const Createdtweet = await Tweet.create({ tweet, user: req.user });
     await Createdtweet.populate("user");
 
@@ -66,6 +65,23 @@ const replyToTweet = async (req, res) => {
       success: true,
       data: replyTweet,
       message: "Reply tweet created",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ success: false, message: "Error occured" });
+  }
+};
+
+const getAllParentTweets = async (req, res) => {
+  try {
+    const allTweets = await Tweet.find().populate("user");
+
+    const groupedTweets = groupTweetsByParent(allTweets);
+
+    return res.status(200).json({
+      success: true,
+      data: groupedTweets,
+      total: groupedTweets.length,
     });
   } catch (error) {
     console.log(error);
@@ -138,6 +154,7 @@ module.exports = {
   postTweet,
   deleteTweetById,
   getAllTweets,
+  getAllParentTweets,
   getTweetById,
   deleteAllTweets,
   replyToTweet,
